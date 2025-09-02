@@ -1,5 +1,5 @@
 import { createBucketClient } from '@cosmicjs/sdk'
-import { Page, GalleryItem, MenuItem, Review, CosmicResponse } from '@/types'
+import { Page, GalleryItem, MenuItem, Review, Property, CosmicResponse } from '@/types'
 
 export const cosmic = createBucketClient({
   bucketSlug: process.env.COSMIC_BUCKET_SLUG as string,
@@ -49,6 +49,46 @@ export async function getPageBySlug(slug: string): Promise<Page | null> {
       return null;
     }
     throw new Error('Failed to fetch page');
+  }
+}
+
+// Fetch all properties
+export async function getProperties(): Promise<Property[]> {
+  try {
+    const response = await cosmic.objects
+      .find({ type: 'properties' })
+      .props(['id', 'title', 'slug', 'metadata'])
+      .depth(1);
+    
+    return response.objects as Property[];
+  } catch (error) {
+    if (hasStatus(error) && error.status === 404) {
+      return [];
+    }
+    throw new Error('Failed to fetch properties');
+  }
+}
+
+// Fetch property by slug
+export async function getPropertyBySlug(slug: string): Promise<Property | null> {
+  try {
+    const response = await cosmic.objects
+      .findOne({ type: 'properties', slug })
+      .props(['id', 'title', 'slug', 'metadata'])
+      .depth(1);
+    
+    const property = response.object as Property;
+    
+    if (!property) {
+      return null;
+    }
+    
+    return property;
+  } catch (error) {
+    if (hasStatus(error) && error.status === 404) {
+      return null;
+    }
+    throw new Error('Failed to fetch property');
   }
 }
 

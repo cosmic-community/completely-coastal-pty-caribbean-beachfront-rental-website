@@ -1,4 +1,6 @@
-import Link from 'next/link'
+'use client'
+
+import { useEffect, useState } from 'react'
 import { Page } from '@/types'
 
 interface HeroSectionProps {
@@ -6,13 +8,18 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ page }: HeroSectionProps) {
-  const title = page.metadata?.title || page.title
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsVisible(true), 200)
+    return () => clearTimeout(timer)
+  }, [])
+
   const heroImage = page.metadata?.hero_image
-  const ctaText = page.metadata?.cta_text || 'Learn More'
-  const ctaLink = page.metadata?.cta_link || '#'
+  const title = page.metadata?.title || page.title
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       {heroImage && (
         <div className="absolute inset-0">
@@ -21,36 +28,25 @@ export default function HeroSection({ page }: HeroSectionProps) {
             alt={title}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-black bg-opacity-30"></div>
+          <div className="absolute inset-0 bg-black/30"></div>
         </div>
       )}
 
       {/* Content */}
-      <div className="relative z-10 text-center text-white container-width px-4">
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight">
+      <div className={`relative z-10 text-center text-white px-4 transition-all duration-1000 transform ${
+        isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
+      }`}>
+        <h1 className="text-5xl lg:text-7xl font-light mb-8 tracking-wide">
           {title}
         </h1>
-        
-        {/* Simplified description */}
-        <p className="text-lg md:text-xl mb-12 max-w-2xl mx-auto text-gray-100">
-          Your Caribbean beachfront escape in Panama
-        </p>
-
-        <Link
-          href={ctaLink}
-          className="btn-primary text-lg px-8 py-4 inline-block"
-          target={ctaLink.startsWith('http') ? '_blank' : '_self'}
-          rel={ctaLink.startsWith('http') ? 'noopener noreferrer' : undefined}
-        >
-          {ctaText}
-        </Link>
+        <div className="w-24 h-px bg-white mx-auto"></div>
       </div>
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
-        <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center">
-          <div className="w-1 h-3 bg-white rounded-full mt-2 animate-pulse"></div>
-        </div>
+      <div className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 transition-all duration-1000 delay-500 ${
+        isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+      }`}>
+        <div className="w-px h-12 bg-white/50 mx-auto animate-pulse"></div>
       </div>
     </section>
   )

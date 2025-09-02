@@ -26,6 +26,29 @@ export interface Page extends CosmicObject {
   };
 }
 
+// Property type for the new rental properties
+export interface Property extends CosmicObject {
+  type: 'properties';
+  metadata: {
+    property_name?: string;
+    hero_image?: {
+      url: string;
+      imgix_url: string;
+    };
+    short_description?: string;
+    capacity?: string;
+    bedrooms?: number;
+    bathrooms?: number;
+    airbnb_link?: string;
+    gallery?: string[] | {
+      url: string;
+      imgix_url: string;
+    }[];
+    amenities?: string;
+    full_description?: string;
+  };
+}
+
 // Gallery item type
 export interface GalleryItem extends CosmicObject {
   type: 'gallery-items';
@@ -92,6 +115,10 @@ export function isPage(obj: CosmicObject): obj is Page {
   return obj.type === 'pages';
 }
 
+export function isProperty(obj: CosmicObject): obj is Property {
+  return obj.type === 'properties';
+}
+
 export function isGalleryItem(obj: CosmicObject): obj is GalleryItem {
   return obj.type === 'gallery-items';
 }
@@ -106,6 +133,7 @@ export function isReview(obj: CosmicObject): obj is Review {
 
 // Utility types for common patterns
 export type CreatePageData = Omit<Page, 'id' | 'created_at' | 'modified_at'>;
+export type CreatePropertyData = Omit<Property, 'id' | 'created_at' | 'modified_at'>;
 export type CreateGalleryItemData = Omit<GalleryItem, 'id' | 'created_at' | 'modified_at'>;
 export type CreateMenuItemData = Omit<MenuItem, 'id' | 'created_at' | 'modified_at'>;
 export type CreateReviewData = Omit<Review, 'id' | 'created_at' | 'modified_at'>;
