@@ -11,7 +11,7 @@ export const metadata = {
 export default async function DiningPage() {
   // Fetch gallery items for the photo squares
   const galleryItems = await getGalleryItems()
-  const featuredPhotos = galleryItems.slice(0, 3) // Get first 3 photos
+  const featuredPhotos = galleryItems.slice(0, 4) // Get first 4 photos
 
   return (
     <div className="min-h-screen bg-neutral-50">
@@ -63,28 +63,52 @@ export default async function DiningPage() {
             </p>
           </div>
 
-          {/* Photo Squares with Hover Effect */}
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-6 mb-16">
-            {featuredPhotos.map((item, index) => (
-              <div
-                key={item.id}
-                className="photo-square group cursor-pointer"
-              >
-                <img
-                  src={`${item.metadata.image.imgix_url}?w=600&h=600&fit=crop&auto=format,compress`}
-                  alt={item.metadata.caption || item.title}
-                  className="w-full h-full object-cover transition-all duration-500 filter grayscale group-hover:grayscale-0"
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-20 transition-opacity duration-500 group-hover:bg-opacity-0"></div>
-                {item.metadata.caption && (
-                  <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
-                    <p className="text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                      {item.metadata.caption}
-                    </p>
-                  </div>
-                )}
+          {/* Photo Layout with Left Large Photo and Right Stacked Photos */}
+          <div className="flex flex-col lg:flex-row gap-6 mb-16 max-w-4xl mx-auto">
+            {/* Left Side - Large Photo (Half Size) */}
+            {featuredPhotos[0] && (
+              <div className="lg:w-1/2">
+                <div className="photo-square group cursor-pointer h-80">
+                  <img
+                    src={`${featuredPhotos[0].metadata.image.imgix_url}?w=600&h=600&fit=crop&auto=format,compress`}
+                    alt={featuredPhotos[0].metadata.caption || featuredPhotos[0].title}
+                    className="w-full h-full object-cover transition-all duration-500 filter grayscale group-hover:grayscale-0"
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-20 transition-opacity duration-500 group-hover:bg-opacity-0"></div>
+                  {featuredPhotos[0].metadata.caption && (
+                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
+                      <p className="text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                        {featuredPhotos[0].metadata.caption}
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
-            ))}
+            )}
+
+            {/* Right Side - Three Stacked Photos */}
+            <div className="lg:w-1/2 flex flex-col gap-6">
+              {featuredPhotos.slice(1, 4).map((item, index) => (
+                <div
+                  key={item.id}
+                  className="photo-square group cursor-pointer h-24"
+                >
+                  <img
+                    src={`${item.metadata.image.imgix_url}?w=400&h=200&fit=crop&auto=format,compress`}
+                    alt={item.metadata.caption || item.title}
+                    className="w-full h-full object-cover transition-all duration-500 filter grayscale group-hover:grayscale-0"
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-20 transition-opacity duration-500 group-hover:bg-opacity-0"></div>
+                  {item.metadata.caption && (
+                    <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent">
+                      <p className="text-white text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                        {item.metadata.caption}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
