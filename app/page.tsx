@@ -4,59 +4,61 @@ import PropertyGrid from '@/components/PropertyGrid'
 import DiningPreview from '@/components/DiningPreview'
 import GalleryPreview from '@/components/GalleryPreview'
 import ReviewsPreview from '@/components/ReviewsPreview'
+import AboutPreview from '@/components/AboutPreview'
 import Loading from '@/components/Loading'
 import { getHomepage } from '@/lib/cosmic'
 
-export const metadata = {
-  title: 'Completely Coastal PTY - Caribbean Beachfront Rentals in Panama',
-  description: 'Escape to authentic Caribbean village life on Panama\'s Costa Abajo de Colón. Beachfront rentals where modern comfort meets rural charm.',
-}
-
 export default async function HomePage() {
-  const page = await getHomepage()
+  const homepage = await getHomepage()
+
+  if (!homepage) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Page Not Found</h1>
+          <p className="text-gray-600">Unable to load homepage content.</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen">
-      {page && <HeroSection page={page} />}
+      {/* Hero Section */}
+      <HeroSection page={homepage} />
       
       {/* Choose Your Space Section */}
-      <section className="section-padding bg-white">
+      <section className="section-padding">
         <div className="container-width">
-          <div className="text-center mb-16 fade-in-up">
+          <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-6">
               Choose your space
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Three unique Caribbean properties, each offering its own slice of paradise
-            </p>
           </div>
           
-          <div className="fade-in-up stagger-children">
-            <Suspense fallback={<Loading />}>
-              <PropertyGrid />
-            </Suspense>
-          </div>
+          {/* Property Grid */}
+          <Suspense fallback={<Loading />}>
+            <PropertyGrid />
+          </Suspense>
         </div>
       </section>
 
-      {/* Other sections with staggered animations */}
-      <div className="fade-in-up">
-        <Suspense fallback={<Loading />}>
-          <DiningPreview />
-        </Suspense>
-      </div>
-
-      <div className="fade-in-up">
-        <Suspense fallback={<Loading />}>
-          <GalleryPreview />
-        </Suspense>
-      </div>
-
-      <div className="fade-in-up">
-        <Suspense fallback={<Loading />}>
-          <ReviewsPreview />
-        </Suspense>
-      </div>
+      {/* Other Sections */}
+      <Suspense fallback={<Loading />}>
+        <DiningPreview />
+      </Suspense>
+      
+      <Suspense fallback={<Loading />}>
+        <GalleryPreview />
+      </Suspense>
+      
+      <Suspense fallback={<Loading />}>
+        <ReviewsPreview />
+      </Suspense>
+      
+      <Suspense fallback={<Loading />}>
+        <AboutPreview />
+      </Suspense>
     </div>
   )
 }
