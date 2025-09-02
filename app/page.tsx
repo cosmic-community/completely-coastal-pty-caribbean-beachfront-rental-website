@@ -6,17 +6,21 @@ import ReviewsPreview from '@/components/ReviewsPreview'
 import Loading from '@/components/Loading'
 import { getHomepage } from '@/lib/cosmic'
 
-export default async function HomePage() {
-  // Fix TypeScript error by properly handling null case
+export default async function Home() {
+  // Fetch homepage data with proper error handling
   const homepage = await getHomepage()
-  
-  // Return early if homepage data is not available
+
+  // Handle case where homepage data might be null
   if (!homepage) {
     return (
       <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Page Not Found</h1>
-          <p className="text-gray-600">Unable to load homepage content.</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Welcome to Completely Coastal PTY
+          </h1>
+          <p className="text-lg text-gray-600">
+            Your Caribbean Beachfront Escape in Panama
+          </p>
         </div>
       </div>
     )
@@ -24,20 +28,22 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      {/* Hero Section - Now minimalistic with title only */}
-      <HeroSection page={homepage} />
-      
-      {/* Gallery Preview */}
+      {/* Hero Section */}
+      <Suspense fallback={<Loading />}>
+        <HeroSection homepage={homepage} />
+      </Suspense>
+
+      {/* Gallery Preview - Moved above Local Dining */}
       <Suspense fallback={<Loading />}>
         <GalleryPreview />
       </Suspense>
-      
-      {/* Dining Preview */}
+
+      {/* Local Dining Preview */}
       <Suspense fallback={<Loading />}>
         <DiningPreview />
       </Suspense>
-      
-      {/* Reviews Preview */}
+
+      {/* Reviews Section */}
       <Suspense fallback={<Loading />}>
         <ReviewsPreview />
       </Suspense>
