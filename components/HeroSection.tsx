@@ -1,69 +1,77 @@
-import Link from 'next/link'
-import { Page } from '@/types'
-
-export interface HeroSectionProps {
-  homepage: Page;
+interface HeroSectionProps {
+  title?: string;
+  content?: string;
+  heroImage?: {
+    url: string;
+    imgix_url: string;
+  };
+  ctaText?: string;
+  ctaLink?: string;
 }
 
-export default function HeroSection({ homepage }: HeroSectionProps) {
-  const title = homepage.metadata?.title || 'Your Caribbean Beachfront Escape in Panama'
-  const content = homepage.metadata?.content || 'Experience authentic Caribbean village life'
-  const ctaText = homepage.metadata?.cta_text || 'Book Now on Airbnb'
-  const ctaLink = homepage.metadata?.cta_link || '#'
-  const heroImage = homepage.metadata?.hero_image
+export default function HeroSection({
+  title = "Your Caribbean Beachfront Escape in Panama",
+  content = "Experience authentic Caribbean village life on Panama's Costa Abajo de Colón.",
+  heroImage,
+  ctaText = "Book Now on Airbnb",
+  ctaLink = "https://airbnb.com/h/completelycoastalgobea"
+}: HeroSectionProps) {
+  const backgroundImage = heroImage?.imgix_url || 
+    "https://cdn.cosmicjs.com/45dbefd0-87fe-11f0-8049-6174f760f7ab-316f8e6c-d279-4163-8ece-adbae06f3310-jpeg.avif";
 
   return (
-    <section className="hero-section relative min-h-screen flex items-center justify-center text-white">
-      {/* Hero Background Image */}
-      {heroImage && (
-        <div className="absolute inset-0 z-0">
-          <img
-            src={`${heroImage.imgix_url}?w=2000&h=1200&fit=crop&auto=format,compress`}
-            alt={title}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black bg-opacity-50"></div>
-        </div>
-      )}
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src={`${backgroundImage}?w=2000&h=1200&fit=crop&auto=format,compress`}
+          alt={title}
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/40"></div>
+      </div>
 
-      {/* Hero Content */}
-      <div className="relative z-10 container-width text-center px-4">
-        <h1 className="text-4xl lg:text-6xl font-bold mb-6 leading-tight">
+      {/* Content */}
+      <div className="relative z-10 container-width text-center text-white px-4">
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
           {title}
         </h1>
         
         {content && (
           <div 
-            className="text-xl lg:text-2xl mb-8 max-w-3xl mx-auto opacity-90"
+            className="text-lg md:text-xl lg:text-2xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed"
             dangerouslySetInnerHTML={{ __html: content }}
           />
         )}
-
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Link
+        
+        {ctaText && ctaLink && (
+          <a
             href={ctaLink}
+            target="_blank"
+            rel="noopener noreferrer"
             className="btn-primary text-lg px-8 py-4"
-            target={ctaLink.startsWith('http') ? '_blank' : undefined}
-            rel={ctaLink.startsWith('http') ? 'noopener noreferrer' : undefined}
           >
             {ctaText}
-          </Link>
-          
-          <Link
-            href="/gallery"
-            className="btn-secondary text-lg px-8 py-4"
-          >
-            View Gallery
-          </Link>
-        </div>
+          </a>
+        )}
       </div>
 
-      {/* Scroll indicator */}
+      {/* Scroll Indicator */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10">
         <div className="animate-bounce">
-          <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-white rounded-full mt-2 animate-pulse"></div>
-          </div>
+          <svg
+            className="w-6 h-6 text-white/80"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 14l-7 7m0 0l-7-7m7 7V3"
+            />
+          </svg>
         </div>
       </div>
     </section>

@@ -1,25 +1,25 @@
 import { Suspense } from 'react'
 import HeroSection from '@/components/HeroSection'
+import PropertyPreview from '@/components/PropertyPreview'
 import GalleryPreview from '@/components/GalleryPreview'
-import DiningPreview from '@/components/DiningPreview'
 import ReviewsPreview from '@/components/ReviewsPreview'
+import DiningPreview from '@/components/DiningPreview'
+import AboutPreview from '@/components/AboutPreview'
 import Loading from '@/components/Loading'
 import { getHomepage } from '@/lib/cosmic'
 
-export default async function Home() {
-  // Fetch homepage data with proper error handling
+export default async function HomePage() {
   const homepage = await getHomepage()
 
-  // Handle case where homepage data might be null
   if (!homepage) {
     return (
-      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
             Welcome to Completely Coastal PTY
           </h1>
-          <p className="text-lg text-gray-600">
-            Your Caribbean Beachfront Escape in Panama
+          <p className="text-gray-600">
+            Loading homepage content...
           </p>
         </div>
       </div>
@@ -27,25 +27,39 @@ export default async function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen">
       {/* Hero Section */}
+      <HeroSection 
+        title={homepage.metadata.title}
+        content={homepage.metadata.content}
+        heroImage={homepage.metadata.hero_image}
+        ctaText={homepage.metadata.cta_text}
+        ctaLink={homepage.metadata.cta_link}
+      />
+
+      {/* Property Preview */}
       <Suspense fallback={<Loading />}>
-        <HeroSection homepage={homepage} />
+        <PropertyPreview />
       </Suspense>
 
-      {/* Gallery Preview - Moved above Local Dining */}
+      {/* Gallery Preview */}
       <Suspense fallback={<Loading />}>
         <GalleryPreview />
       </Suspense>
 
-      {/* Local Dining Preview */}
+      {/* Reviews Preview */}
+      <Suspense fallback={<Loading />}>
+        <ReviewsPreview />
+      </Suspense>
+
+      {/* Dining Preview */}
       <Suspense fallback={<Loading />}>
         <DiningPreview />
       </Suspense>
 
-      {/* Reviews Section */}
+      {/* About Preview */}
       <Suspense fallback={<Loading />}>
-        <ReviewsPreview />
+        <AboutPreview />
       </Suspense>
     </div>
   )
