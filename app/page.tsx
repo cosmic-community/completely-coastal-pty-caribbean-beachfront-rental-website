@@ -1,63 +1,137 @@
 import HeroSection from '@/components/HeroSection'
+import AboutPreview from '@/components/AboutPreview'
 import PropertyPreview from '@/components/PropertyPreview'
 import GalleryPreview from '@/components/GalleryPreview'
 import DiningPreview from '@/components/DiningPreview'
-import AboutPreview from '@/components/AboutPreview'
 import ReviewsPreview from '@/components/ReviewsPreview'
-import CosmicBadge from '@/components/CosmicBadge'
-import { getHomepage } from '@/lib/cosmic'
-import { Page } from '@/types'
+import { getHomepage, getGalleryItems } from '@/lib/cosmic'
 
 export default async function HomePage() {
-  // Fetch homepage data with proper null handling
-  const homepageData: Page | null = await getHomepage()
-  
-  // If no homepage data found, use default fallback
-  const page: Page = homepageData || {
-    id: 'homepage-fallback',
-    slug: 'homepage',
-    title: 'Your Caribbean Beachfront Escape in Panama',
-    type: 'pages' as const,
-    created_at: new Date().toISOString(),
-    modified_at: new Date().toISOString(),
-    metadata: {
-      title: 'Your Caribbean Beachfront Escape in Panama',
-      hero_image: {
-        url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=2000&auto=format,compress',
-        imgix_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=2000&auto=format,compress'
-      },
-      content: '<p>Escape to authentic Caribbean village life on Panama\'s Costa Abajo de Colón. Just 2.5 hours from Panama City, discover beachfront comfort where the neighbor\'s chickens roam free and every sunset paints the sky in coral and gold.</p><p>Experience the perfect blend of modern comfort and rural charm at our beachfront property - your gateway to authentic Panama.</p>',
-      cta_text: 'Book Now on Airbnb',
-      cta_link: 'https://airbnb.com/h/completelycoastalgobea',
-      seo_keywords: 'Caribbean beachfront rental Panama, Costa Abajo de Colón, rural Panama Airbnb'
-    }
-  }
-
-  // Get bucket slug for the cosmic badge
-  const bucketSlug = process.env.COSMIC_BUCKET_SLUG as string
+  const homepage = await getHomepage()
+  // Fetch gallery items for the photo squares
+  const galleryItems = await getGalleryItems()
+  const featuredPhotos = galleryItems.slice(0, 6) // Get first 6 photos for the grid
 
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <HeroSection page={page} />
+    <>
+      <HeroSection page={homepage} />
+      
+      {/* Choose Your Space Section */}
+      <section className="section-padding bg-white">
+        <div className="container-width">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
+              Choose Your Space
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Discover the perfect spots around our beachfront property - from stunning ocean views to cozy interior spaces, 
+              each corner offers its own unique Caribbean charm.
+            </p>
+          </div>
 
-      {/* Property Preview */}
-      <PropertyPreview />
+          {/* Photo Grid Layout */}
+          <div className="max-w-6xl mx-auto">
+            <div className="flex flex-col lg:flex-row gap-6">
+              {/* Left Side - Large Photo (Half Size) */}
+              {featuredPhotos[0] && (
+                <div className="lg:w-1/2">
+                  <div className="photo-square group cursor-pointer h-96">
+                    <img
+                      src={`${featuredPhotos[0].metadata.image.imgix_url}?w=800&h=800&fit=crop&auto=format,compress`}
+                      alt={featuredPhotos[0].metadata.caption || featuredPhotos[0].title}
+                      className="w-full h-full object-cover transition-all duration-500 filter grayscale group-hover:grayscale-0"
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-20 transition-opacity duration-500 group-hover:bg-opacity-0"></div>
+                    {featuredPhotos[0].metadata.caption && (
+                      <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/70 to-transparent">
+                        <p className="text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                          {featuredPhotos[0].metadata.caption}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
 
-      {/* Gallery Preview */}
-      <GalleryPreview />
+              {/* Right Side - Grid of Smaller Photos */}
+              <div className="lg:w-1/2">
+                <div className="grid grid-cols-2 gap-4">
+                  {/* Top Row - Two Photos */}
+                  {featuredPhotos.slice(1, 3).map((item, index) => (
+                    <div
+                      key={item.id}
+                      className="photo-square group cursor-pointer h-44"
+                    >
+                      <img
+                        src={`${item.metadata.image.imgix_url}?w=400&h=400&fit=crop&auto=format,compress`}
+                        alt={item.metadata.caption || item.title}
+                        className="w-full h-full object-cover transition-all duration-500 filter grayscale group-hover:grayscale-0"
+                      />
+                      <div className="absolute inset-0 bg-black bg-opacity-20 transition-opacity duration-500 group-hover:bg-opacity-0"></div>
+                      {item.metadata.caption && (
+                        <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/70 to-transparent">
+                          <p className="text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                            {item.metadata.caption}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
 
-      {/* Local Dining Preview */}
-      <DiningPreview />
+                  {/* Middle Row - Two Photos */}
+                  {featuredPhotos.slice(3, 5).map((item, index) => (
+                    <div
+                      key={item.id}
+                      className="photo-square group cursor-pointer h-44"
+                    >
+                      <img
+                        src={`${item.metadata.image.imgix_url}?w=400&h=400&fit=crop&auto=format,compress`}
+                        alt={item.metadata.caption || item.title}
+                        className="w-full h-full object-cover transition-all duration-500 filter grayscale group-hover:grayscale-0"
+                      />
+                      <div className="absolute inset-0 bg-black bg-opacity-20 transition-opacity duration-500 group-hover:bg-opacity-0"></div>
+                      {item.metadata.caption && (
+                        <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/70 to-transparent">
+                          <p className="text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                            {item.metadata.caption}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
 
-      {/* About Preview */}
+                  {/* Bottom Row - Single Photo Spanning Two Columns */}
+                  {featuredPhotos[5] && (
+                    <div className="col-span-2">
+                      <div className="photo-square group cursor-pointer h-32">
+                        <img
+                          src={`${featuredPhotos[5].metadata.image.imgix_url}?w=800&h=300&fit=crop&auto=format,compress`}
+                          alt={featuredPhotos[5].metadata.caption || featuredPhotos[5].title}
+                          className="w-full h-full object-cover transition-all duration-500 filter grayscale group-hover:grayscale-0"
+                        />
+                        <div className="absolute inset-0 bg-black bg-opacity-20 transition-opacity duration-500 group-hover:bg-opacity-0"></div>
+                        {featuredPhotos[5].metadata.caption && (
+                          <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/70 to-transparent">
+                            <p className="text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                              {featuredPhotos[5].metadata.caption}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <AboutPreview />
-
-      {/* Reviews Preview */}
+      <PropertyPreview />
+      <GalleryPreview />
+      <DiningPreview />
       <ReviewsPreview />
-
-      {/* Cosmic Badge */}
-      <CosmicBadge bucketSlug={bucketSlug} />
-    </div>
+    </>
   )
 }
